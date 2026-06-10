@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Chemistry Explorer & Worksheet Reference</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: #faf9f6; 
+            color: #292524;
+        }
+        .chart-container { 
+            position: relative; 
+            width: 100%; 
+            max-width: 600px; 
+            margin-left: auto; 
+            margin-right: auto; 
+            height: 300px; 
+            max-height: 400px; 
+        }
+        @media (min-width: 768px) { 
+            .chart-container { 
+                height: 350px; 
+            } 
+        }
+        .smooth-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hide {
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            border-top-width: 0px !important;
+        }
+        .show {
+            opacity: 1;
+            max-height: 800px;
+            overflow: visible;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <nav class="bg-stone-950 text-stone-50 sticky top-0 z-50 shadow-lg border-b border-stone-800">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-amber-400 flex items-center gap-2">
+                <span>⚗️</span> Toby's Grade 8 Lab
+            </h1>
+            <div class="hidden lg:flex space-x-6 text-sm font-semibold text-stone-300">
+                <a href="#kmt" class="hover:text-teal-400 transition-colors">KMT</a>
+                <a href="#timeline" class="hover:text-amber-400 transition-colors">Timeline</a>
+                <a href="#anatomy" class="hover:text-rose-400 transition-colors">Anatomy</a>
+                <a href="#identity" class="hover:text-indigo-400 transition-colors">Element Builder</a>
+                <a href="#reference" class="hover:text-emerald-400 transition-colors">Complete Study Guide</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-6xl mx-auto px-4 py-8 space-y-16">
+
+        <header class="text-center space-y-4 py-12 border-b border-stone-200">
+            <span class="bg-emerald-100 text-emerald-800 text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full">Worksheet & Interactive Simulator</span>
+            <h2 class="text-4xl md:text-6xl font-black text-stone-900 tracking-tight leading-none">Toby's Chemistry Portal</h2>
+            <p class="text-lg md:text-xl text-stone-600 max-w-3xl mx-auto leading-relaxed">
+                Welcome, <strong>Toby</strong>! This unified dashboard combines your physical review sheet answers with interactive labs and custom AI assistance to lock in your study strategy for June 2, 2026.
+            </p>
+        </header>
+
+        <!-- MODULE 1: KMT -->
+        <section id="kmt" class="bg-white rounded-3xl shadow-xl border border-stone-200 p-6 md:p-10 smooth-transition hover:shadow-2xl">
+            <div class="mb-8">
+                <span class="text-teal-600 text-xs font-black uppercase tracking-widest bg-teal-50 px-3 py-1 rounded-full">Module 01</span>
+                <h3 class="text-3xl font-extrabold text-stone-900 flex items-center gap-2 mt-2">
+                    <span>🌡️</span> Kinetic Molecular Theory & Phase Changes
+                </h3>
+                <p class="mt-3 text-stone-600 leading-relaxed max-w-3xl">
+                    All matter is made of tiny particles in constant motion, with their speed determined directly by thermal energy. Slide the control to add heat, and watch the average particle speed rise on the chart as structural state boundaries shift.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 items-stretch">
+                <div class="space-y-6 flex flex-col justify-between bg-stone-50 p-6 rounded-2xl border border-stone-200">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <label for="tempSlider" class="block text-xs font-black text-stone-600 uppercase tracking-wider">Adjust Thermal Energy (Temperature)</label>
+                            <span id="tempValueDisplay" class="text-xs bg-stone-200 text-stone-800 font-bold px-2 py-0.5 rounded">10°C</span>
+                        </div>
+                        <input type="range" id="tempSlider" min="0" max="100" value="10" class="w-full h-3 bg-stone-300 rounded-lg appearance-none cursor-pointer accent-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        <div class="grid grid-cols-3 text-center text-[10px] font-black text-stone-400 uppercase tracking-widest">
+                            <span class="text-left">Solid (Cold)</span>
+                            <span>Liquid (Warm)</span>
+                            <span class="text-right">Gas (Hot)</span>
+                        </div>
+                    </div>
+
+                    <div id="stateInfoCard" class="bg-white p-6 rounded-xl shadow-sm border-l-8 border-teal-500 smooth-transition flex-grow flex flex-col justify-center">
+                        <h4 id="stateTitle" class="text-xl font-black text-stone-800 mb-2 flex items-center gap-2">🧊 Solid State</h4>
+                        <p id="stateDesc" class="text-stone-600 text-sm leading-relaxed mb-4">
+                            Particles are tightly packed together in a rigid, fixed crystalline structure. They cannot slide past one another; they can only vibrate in place.
+                        </p>
+                        <div class="bg-stone-50 p-3 rounded-lg border border-stone-150 text-xs text-stone-700 font-medium">
+                            <strong class="text-stone-900 block uppercase tracking-wider text-[10px] mb-1">State Transition Context:</strong>
+                            <span id="phaseNote">Removing thermal energy causes liquids to undergo Solidification (Freezing).</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm flex flex-col justify-center">
+                    <h4 class="text-center font-bold text-stone-700 mb-4 text-sm uppercase tracking-wider">Particle Speed Verification</h4>
+                    <div class="chart-container">
+                        <canvas id="kmtChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULE 2: ATOMIC TIMELINE -->
+        <section id="timeline" class="bg-white rounded-3xl shadow-xl border border-stone-200 p-6 md:p-10 smooth-transition hover:shadow-2xl">
+            <div class="mb-8">
+                <span class="text-amber-600 text-xs font-black uppercase tracking-widest bg-amber-50 px-3 py-1 rounded-full">Module 02</span>
+                <h3 class="text-3xl font-extrabold text-stone-900 flex items-center gap-2 mt-2">
+                    <span>⏳</span> Historical Timeline of Atomic Models
+                </h3>
+                <p class="mt-3 text-stone-600 leading-relaxed max-w-3xl">
+                    Discover how atomic theories changed as scientists designed fresh methods to test older ideas. Tap on any scientist below to review their model name, their key experiments, and why the previous model had to be modified.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+                <div class="md:col-span-5 flex flex-col space-y-2" id="timelineButtons">
+                </div>
+
+                <div class="md:col-span-7 bg-stone-50 p-8 rounded-2xl border border-stone-200 shadow-inner flex flex-col justify-center min-h-[380px] relative overflow-hidden">
+                    <div id="timelineContent" class="smooth-transition space-y-6 text-center">
+                        <div class="text-7xl" id="timelineIcon">🏛️</div>
+                        <div class="space-y-2">
+                            <h4 class="text-3xl font-black text-stone-900" id="timelineName">Select a Scientist</h4>
+                            <p class="text-amber-600 font-extrabold uppercase tracking-widest text-xs bg-amber-50 inline-block px-3 py-1 rounded-full border border-amber-200" id="timelineModel"></p>
+                        </div>
+                        <p class="text-stone-600 text-base md:text-lg leading-relaxed max-w-lg mx-auto" id="timelineDesc">
+                            Click a name on the left to explore their contribution to the atomic model.
+                        </p>
+                        <div class="bg-white p-4 rounded-xl border border-stone-150 text-left text-xs space-y-1 shadow-sm" id="timelineCorrection">
+                            <strong class="text-stone-800 uppercase tracking-wider text-[10px] block">Model Evolution Shift:</strong>
+                            <span id="timelineReason" class="text-stone-600">Select a scientist above to see what model was replaced.</span>
+                        </div>
+
+                        <!-- Ask Scientist Integration -->
+                        <div id="askScientistSection" class="mt-6 pt-6 border-t border-stone-200 text-left space-y-3 hidden">
+                            <label class="block text-xs font-black text-amber-800 uppercase tracking-wider">✨ Ask <span id="scientistAskName" class="font-extrabold"></span> a Question</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="scientistQuestionInput" placeholder="e.g., How did you prove the atom isn't solid?" class="flex-grow bg-white border border-stone-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                <button id="btnAskScientist" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-all shadow-md shrink-0 flex items-center gap-1">
+                                    <span>✨</span> Ask
+                                </button>
+                            </div>
+                            <div id="scientistAnswerBox" class="mt-3 p-4 bg-white border border-amber-100 rounded-xl text-xs text-stone-700 leading-relaxed shadow-sm hidden">
+                                <div id="scientistLoader" class="flex items-center gap-2 text-stone-500 font-bold justify-center py-2">
+                                    <span class="animate-ping h-2.5 w-2.5 rounded-full bg-amber-500"></span>
+                                    <span>Consulting historical papers...</span>
+                                </div>
+                                <p id="scientistAnswerText" class="whitespace-pre-line text-stone-800 leading-relaxed"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULE 3: ANATOMY OF AN ATOM -->
+        <section id="anatomy" class="bg-white rounded-3xl shadow-xl border border-stone-200 p-6 md:p-10 smooth-transition hover:shadow-2xl">
+            <div class="mb-8">
+                <span class="text-rose-600 text-xs font-black uppercase tracking-widest bg-rose-50 px-3 py-1 rounded-full">Module 03</span>
+                <h3 class="text-3xl font-extrabold text-stone-900 flex items-center gap-2 mt-2">
+                    <span>⚛️</span> Anatomy of an Atom
+                </h3>
+                <p class="mt-3 text-stone-600 leading-relaxed max-w-3xl">
+                    Every atom consists of positive, negative, and neutral subatomic particles. Click the cards below to toggle properties, verify charges, and solidify active recall definitions.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- PROTON -->
+                <div class="cursor-pointer" onclick="toggleParticle('protonDetails', this)">
+                    <div class="bg-stone-50 border border-stone-200 rounded-2xl p-6 text-center smooth-transition hover:border-rose-300 hover:bg-rose-50/50 hover:shadow-lg h-full flex flex-col justify-between">
+                        <div>
+                            <div class="text-5xl mb-4 transform group-hover:scale-110 smooth-transition">🔴</div>
+                            <h4 class="text-xl font-black text-stone-900">Proton</h4>
+                            <p class="text-xs text-rose-600 font-bold tracking-widest uppercase mt-1">Positive (+1)</p>
+                        </div>
+                        <div id="protonDetails" class="hide text-stone-600 text-xs space-y-2 text-left mt-4 border-t border-rose-100 pt-4">
+                            <p><strong>Charge:</strong> Positive ($+1$)</p>
+                            <p><strong>Location:</strong> Inside the nucleus</p>
+                            <p><strong>Identity role:</strong> Establishes the Atomic Number</p>
+                            <p><strong>Mass contribution:</strong> Heavy (Part of the mass number)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NEUTRON -->
+                <div class="cursor-pointer" onclick="toggleParticle('neutronDetails', this)">
+                    <div class="bg-stone-50 border border-stone-200 rounded-2xl p-6 text-center smooth-transition hover:border-stone-400 hover:bg-stone-100/50 hover:shadow-lg h-full flex flex-col justify-between">
+                        <div>
+                            <div class="text-5xl mb-4 transform group-hover:scale-110 smooth-transition">⚪</div>
+                            <h4 class="text-xl font-black text-stone-900">Neutron</h4>
+                            <p class="text-xs text-stone-500 font-bold tracking-widest uppercase mt-1">Neutral (0)</p>
+                        </div>
+                        <div id="neutronDetails" class="hide text-stone-600 text-xs space-y-2 text-left mt-4 border-t border-stone-200 pt-4">
+                            <p><strong>Charge:</strong> Uncharged / Neutral ($0$)</p>
+                            <p><strong>Location:</strong> Inside the nucleus</p>
+                            <p><strong>Role:</strong> Stabilizes nuclear structure</p>
+                            <p><strong>Mass contribution:</strong> Heavy (Part of the mass number)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ELECTRON -->
+                <div class="cursor-pointer" onclick="toggleParticle('electronDetails', this)">
+                    <div class="bg-stone-50 border border-stone-200 rounded-2xl p-6 text-center smooth-transition hover:border-cyan-300 hover:bg-cyan-50/50 hover:shadow-lg h-full flex flex-col justify-between">
+                        <div>
+                            <div class="text-5xl mb-4 transform group-hover:scale-110 smooth-transition">🔵</div>
+                            <h4 class="text-xl font-black text-stone-900">Electron</h4>
+                            <p class="text-xs text-cyan-600 font-bold tracking-widest uppercase mt-1">Negative (-1)</p>
+                        </div>
+                        <div id="electronDetails" class="hide text-stone-600 text-xs space-y-2 text-left mt-4 border-t border-cyan-100 pt-4">
+                            <p><strong>Charge:</strong> Negative ($-1$)</p>
+                            <p><strong>Location:</strong> Outside nucleus (shells/cloud)</p>
+                            <p><strong>Role:</strong> Dictates electrical interactions</p>
+                            <p><strong>Mass contribution:</strong> Negligible (considered zero)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 bg-stone-900 text-stone-100 p-6 rounded-2xl flex items-start gap-4 border border-stone-800 shadow-md">
+                <span class="text-3xl">💡</span>
+                <div>
+                    <h5 class="font-extrabold text-lg mb-1 tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-teal-300 to-amber-300">Key Concept: Concentrated Mass</h5>
+                    <p class="text-stone-300 text-sm leading-relaxed">
+                        Almost 100% of an atom's physical weight is packed directly into the central nucleus because protons and neutrons are dramatically heavier than electrons. The rest of the atom is mostly empty space!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- MODULE 4: ELEMENT BUILDER -->
+        <section id="identity" class="bg-white rounded-3xl shadow-xl border border-stone-200 p-6 md:p-10 smooth-transition hover:shadow-2xl">
+            <div class="mb-8">
+                <span class="text-indigo-600 text-xs font-black uppercase tracking-widest bg-indigo-50 px-3 py-1 rounded-full">Module 04</span>
+                <h3 class="text-3xl font-extrabold text-stone-900 flex items-center gap-2 mt-2">
+                    <span>🧪</span> Periodic Table & Element Builder (Transmutation)
+                </h3>
+                <p class="mt-3 text-stone-600 leading-relaxed max-w-3xl">
+                    By definition, the proton count is the element's Atomic Number. Use the interactive buttons below to add or remove protons. Watch how changing the nucleus changes the element's symbol, properties, and name <strong>(Transmutation)</strong>. Supports elements <strong>1 to 21</strong>!
+                </p>
+            </div>
+
+            <div class="max-w-2xl mx-auto bg-stone-50 rounded-3xl border-4 border-indigo-100 p-6 md:p-8 text-center shadow-inner relative overflow-hidden">
+                <h4 class="text-stone-500 font-black uppercase tracking-widest text-xs mb-6">Interactive Atomic Transmutator</h4>
+                
+                <div class="flex justify-center items-center gap-8 mb-10">
+                    <button id="btnSubProton" class="w-14 h-14 rounded-full bg-rose-100 text-rose-700 font-extrabold text-3xl hover:bg-rose-200 active:scale-95 smooth-transition flex items-center justify-center shadow-md focus:outline-none focus:ring-4 focus:ring-rose-300">-</button>
+                    
+                    <div class="flex flex-col items-center">
+                        <span class="text-7xl font-black text-indigo-950 tracking-tight" id="protonCountDisplay">8</span>
+                        <span class="text-stone-500 font-black text-xs uppercase tracking-widest mt-1">Protons</span>
+                    </div>
+                    
+                    <button id="btnAddProton" class="w-14 h-14 rounded-full bg-emerald-100 text-emerald-700 font-extrabold text-3xl hover:bg-emerald-200 active:scale-95 smooth-transition flex items-center justify-center shadow-md focus:outline-none focus:ring-4 focus:ring-emerald-300">+</button>
+                </div>
+
+                <div id="elementCard" class="bg-white border-2 border-indigo-200 rounded-2xl p-8 relative overflow-hidden shadow-lg smooth-transition">
+                    <div class="absolute top-0 right-0 bg-indigo-100 text-indigo-800 font-black px-4 py-1.5 rounded-bl-xl text-xs uppercase tracking-wide">
+                        Atomic No: <span id="atomicNumberDisplay">8</span>
+                    </div>
+                    
+                    <div class="text-8xl mb-2 font-serif font-black text-stone-800 smooth-transition transform" id="elementSymbol">O</div>
+                    <div class="text-3xl font-black text-indigo-900 tracking-tight" id="elementName">Oxygen</div>
+                    
+                    <span id="elementCategory" class="inline-block mt-3 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-stone-100 text-stone-600">
+                        Nonmetal
+                    </span>
+                </div>
+
+                <div class="mt-8 text-xs md:text-sm text-stone-600 bg-white border border-stone-200 p-4 rounded-xl text-left shadow-sm">
+                    <p class="leading-relaxed">
+                        <strong class="text-stone-800">Neutral Rule Configuration:</strong> To remain stable and uncharged, this <span id="neutralElementName" class="font-bold text-stone-800">Oxygen</span> atom requires precisely <span id="electronCountDisplay" class="font-extrabold text-indigo-700">8</span> negative electrons orbiting outside the nucleus to perfectly balance the positive charges.
+                    </p>
+                </div>
+
+                <!-- Gemini AI Challenge Block -->
+                <div class="mt-6 pt-6 border-t border-stone-200 text-left">
+                    <button id="btnAiChallenge" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3.5 px-4 rounded-xl text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2">
+                        ✨ Generate AI Chemistry Challenge
+                    </button>
+                    <div id="aiChallengeBox" class="mt-4 p-4 bg-white border border-indigo-100 rounded-2xl shadow-sm hidden">
+                        <div id="challengeLoader" class="flex items-center gap-2 text-stone-500 font-bold justify-center py-4">
+                            <span class="animate-ping h-2.5 w-2.5 rounded-full bg-indigo-500"></span>
+                            <span>Gemini is formulating a custom question...</span>
+                        </div>
+                        <div id="challengeContent" class="space-y-4 hidden">
+                            <p class="font-black text-stone-800 text-sm leading-relaxed" id="challengeQuestionText"></p>
+                            <div class="grid grid-cols-1 gap-2.5" id="challengeOptions"></div>
+                            <div id="challengeFeedback" class="p-3 rounded-xl text-xs font-semibold leading-relaxed hidden"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW MODULE 5: WORKBOOK REFERENCE DOSSIER -->
+        <section id="reference" class="bg-white rounded-3xl shadow-xl border border-stone-200 p-6 md:p-10 smooth-transition hover:shadow-2xl">
+            <div class="mb-8 border-b border-stone-200 pb-6">
+                <span class="text-emerald-600 text-xs font-black uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full">Module 05</span>
+                <h3 class="text-3xl font-extrabold text-stone-900 flex items-center gap-2 mt-2">
+                    <span>📖</span> Toby's Complete Worksheet Study Dossier
+                </h3>
+                <p class="mt-3 text-stone-600 leading-relaxed max-w-3xl">
+                    This section contains <strong>your exact physical worksheet questions and answers</strong>. No AI-generated or dynamic content is here; it is a fully compiled, perfectly structured digital study guide of your curriculum. Navigate the tabs to review the key answers.
+                </p>
+                <p class="text-xs text-stone-500 mt-2 font-medium">📍 Reviewing: Grade 8 Chemistry Review | Toby | June 2, 2026</p>
+            </div>
+
+            <!-- Dossier Tabs -->
+            <div class="flex flex-wrap gap-2 mb-6 border-b border-stone-200 pb-4">
+                <button onclick="switchDossierTab('kmtTab', this)" class="dossier-tab-btn px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider smooth-transition bg-emerald-600 text-white shadow-md">
+                    Part A: KMT & Matter
+                </button>
+                <button onclick="switchDossierTab('atomsTab', this)" class="dossier-tab-btn px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider smooth-transition bg-stone-100 text-stone-600 hover:bg-stone-200">
+                    Part B & C: Atomic Theory
+                </button>
+                <button onclick="switchDossierTab('elementsTab', this)" class="dossier-tab-btn px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider smooth-transition bg-stone-100 text-stone-600 hover:bg-stone-200">
+                    Part D: Periodic Table
+                </button>
+                <button onclick="switchDossierTab('connectionsTab', this)" class="dossier-tab-btn px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider smooth-transition bg-stone-100 text-stone-600 hover:bg-stone-200">
+                    Part E: Connecting Concepts
+                </button>
+                <button onclick="switchDossierTab('assessmentTab', this)" class="dossier-tab-btn px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider smooth-transition bg-stone-100 text-stone-600 hover:bg-stone-200">
+                    My Self-Assessment
+                </button>
+            </div>
+
+            <!-- Dossier Tab Contents -->
+            <div id="dossierContent" class="space-y-6">
+                <!-- PART A -->
+                <div id="kmtTab" class="dossier-panel space-y-8">
+                    <div>
+                        <h4 class="text-lg font-extrabold text-stone-800 border-b border-stone-200 pb-2 mb-4">1. Fill in the Blanks Summary</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-4 bg-stone-50 rounded-xl border border-stone-200 text-sm">
+                                <span class="text-[10px] uppercase font-black tracking-widest text-emerald-600">Statement 1</span>
+                                <p class="text-stone-800 font-semibold mt-1">All matter is made of tiny <strong class="text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded">particles</strong>.</p>
+                            </div>
+                            <div class="p-4 bg-stone-50 rounded-xl border border-stone-200 text-sm">
+                                <span class="text-[10px] uppercase font-black tracking-widest text-emerald-600">Statement 2</span>
+                                <p class="text-stone-800 font-semibold mt-1">Particles are always in constant <strong class="text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded">motion</strong>.</p>
+                            </div>
+                            <div class="p-4 bg-stone-50 rounded-xl border border-stone-200 text-sm">
+                                <span class="text-[10px] uppercase font-black tracking-widest text-emerald-600">Statement 3</span>
+                                <p class="text-stone-800 font-semibold mt-1">As <strong class="text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded">temperature</strong> increases, particles move faster.</p>
+                            </div>
+                            <div class="p-4 bg-stone-50 rounded-xl border border-stone-200 text-sm">
+                                <span class="text-[10px] uppercase font-black tracking-widest text-emerald-600">Statement 4</span>
+                                <p class="text-stone-800 font-semibold mt-1">There is empty <strong class="text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded">space</strong> between particles.</p>
+                            </div>
+                            <div class="p-4 bg-stone-50 rounded-xl border border-stone-200 text-sm">
+                                <span class="text-[10px] uppercase font-black tracking-widest text-emerald-600">Statement 5</span>
+                                <p class="text-stone-800 font-semibold mt-1">Particles move <strong class="text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded">faster</strong> when heated.</p>
+                            </div>
+                            <div class="p-4 bg-stone-50 rounded-xl border border-stone-200 text-sm">
+                                <span class="text-[10px] uppercase font-black tracking-widest text-emerald-600">Statement 6</span>
+                                <p class="text-stone-800 font-semibold mt-1">Particles <strong class="text-emerald-700 bg-emerald-50 px-1 py-0.5 rounded">attract</strong> each other.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-lg font-extrabold text-stone-800 border-b border-stone-200 pb-2 mb-4">2. States of Matter Reference Table</h4>
+                        <div class="overflow-x-auto rounded-xl border border-stone-200">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead>
+                                    <tr class="bg-stone-100 text-stone-700 border-b border-stone-200 font-bold">
+                                        <th class="p-4">State of Matter</th>
+                                        <th class="p-4">Particle Arrangement</th>
+                                        <th class="p-4">Particle Movement</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-stone-200 text-stone-600">
+                                    <tr>
+                                        <td class="p-4 font-bold text-stone-800">Solid</td>
+                                        <td class="p-4">Tightly packed together in a fixed structure</td>
+                                        <td class="p-4">Vibrate in place</td>
+                                    </tr>
+                                    <tr class="bg-stone-50/50">
+                                        <td class="p-4 font-bold text-stone-800">Liquid</td>
+                                        <td class="p-4">Close together but with no fixed arrangement</td>
+                                        <td class="p-4">Slide and tumble past each other</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-4 font-bold text-stone-800">Gas</td>
+                                        <td class="p-4">Very far apart with lots of empty space</td>
+                                        <td class="p-4">Move rapidly and randomly in all directions</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-stone-50 p-6 rounded-xl border border-stone-200 space-y-4">
+                            <h5 class="font-extrabold text-stone-800 text-base">3. Multiple Choice Verification</h5>
+                            <div class="space-y-3 text-xs">
+                                <div class="bg-white p-3 rounded-lg border border-stone-150">
+                                    <p class="font-bold text-stone-700">Q1. Which state of matter has particles that are farthest apart?</p>
+                                    <p class="text-emerald-700 font-bold mt-1">✓ Gas</p>
+                                </div>
+                                <div class="bg-white p-3 rounded-lg border border-stone-150">
+                                    <p class="font-bold text-stone-700">Q2. What happens to particles when a substance is heated?</p>
+                                    <p class="text-emerald-700 font-bold mt-1">✓ They move faster</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-stone-50 p-6 rounded-xl border border-stone-200 space-y-3">
+                            <h5 class="font-extrabold text-stone-800 text-base">4. Food Colouring Demonstration</h5>
+                            <p class="text-stone-600 text-sm leading-relaxed">
+                                <strong>Why does food coloring spread?</strong><br>
+                                The food colouring spreads because water molecules are in constant motion. And because moving water molecules collide with the food colouring particles, bumping them around and spreading them throughout the container faster.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-lg font-extrabold text-stone-800 border-b border-stone-200 pb-2 mb-4">5. Phase Changes Reference</h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="p-4 bg-stone-50 rounded-xl text-center border border-stone-200">
+                                <span class="text-stone-400 font-bold text-[10px] block uppercase tracking-wide">Solid → Liquid</span>
+                                <span class="font-black text-stone-800 text-base block mt-1">Melting</span>
+                            </div>
+                            <div class="p-4 bg-stone-50 rounded-xl text-center border border-stone-200">
+                                <span class="text-stone-400 font-bold text-[10px] block uppercase tracking-wide">Liquid → Gas</span>
+                                <span class="font-black text-stone-800 text-base block mt-1">Evaporation / Vaporization</span>
+                            </div>
+                            <div class="p-4 bg-stone-50 rounded-xl text-center border border-stone-200">
+                                <span class="text-stone-400 font-bold text-[10px] block uppercase tracking-wide">Gas → Liquid</span>
+                                <span class="font-black text-stone-800 text-base block mt-1">Condensation</span>
+                            </div>
+                            <div class="p-4 bg-stone-50 rounded-xl text-center border border-stone-200">
+                                <span class="text-stone-400 font-bold text-[10px] block uppercase tracking-wide">Liquid → Solid</span>
+                                <span class="font-black text-stone-800 text-base block mt-1">Freezing / Solidification</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PART B & C -->
+                <div id="atomsTab" class="dossier-panel space-y-8 hidden">
+                    <div>
+                        <h4 class="text-lg font-extrabold text-stone-800 border-b border-stone-200 pb-2 mb-4">6. Match the Scientist Timeline</h4>
+                        <div class="space-y-3">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between p-4 bg-stone-50 rounded-xl border border-stone-200 gap-2">
+                                <div class="text-sm">
+                                    <strong class="text-stone-800 text-base">Democritus</strong>
+                                    <p class="text-stone-500 text-xs mt-1">Ancient Philosophy</p>
+                                </div>
+                                <span class="text-xs bg-stone-200 text-stone-700 font-bold px-3 py-1 rounded-full self-start md:self-auto">Suggested matter is made of tiny particles called atoms.</span>
+                            </div>
+                            <div class="flex flex-col md:flex-row md:items-center justify-between p-4 bg-stone-50 rounded-xl border border-stone-200 gap-2">
+                                <div class="text-sm">
+                                    <strong class="text-stone-800 text-base">Dalton</strong>
+                                    <p class="text-stone-500 text-xs mt-1">Indivisible Spheres</p>
+                                </div>
+                                <span class="text-xs bg-stone-200 text-stone-700 font-bold px-3 py-1 rounded-full self-start md:self-auto">Created the billiard ball model of the atom.</span>
+                            </div>
+                            <div class="flex flex-col md:flex-row md:items-center justify-between p-4 bg-stone-50 rounded-xl border border-stone-200 gap-2">
+                                <div class="text-sm">
+                                    <strong class="text-stone-800 text-base">Thomson</strong>
+                                    <p class="text-stone-500 text-xs mt-1">Plum Pudding Model</p>
+                                </div>
+                                <span class="text-xs bg-stone-200 text-stone-700 font-bold px-3 py-1 rounded-full self-start md:self-auto">Discovered electrons and proposed the plum pudding model.</span>
+                            </div>
+                            <div class="flex flex-col md:flex-row md:items-center justify-between p-4 bg-stone-50 rounded-xl border border-stone-200 gap-2">
+                                <div class="text-sm">
+                                    <strong class="text-stone-800 text-base">Rutherford</strong>
+                                    <p class="text-stone-500 text-xs mt-1">Nuclear Model</p>
+                                </div>
+                                <span class="text-xs bg-stone-200 text-stone-700 font-bold px-3 py-1 rounded-full self-start md:self-auto">Gold foil experiment showed atoms have a nucleus.</span>
+                            </div>
+                            <div class="flex flex-col md:flex-row md:items-center justify-between p-4 bg-stone-50 rounded-xl border border-stone-200 gap-2">
+                                <div class="text-sm">
+                                    <strong class="text-stone-800 text-base">Bohr</strong>
+                                    <p class="text-stone-500 text-xs mt-1">Planetary Orbits</p>
+                                </div>
+                                <span class="text-xs bg-stone-200 text-stone-700 font-bold px-3 py-1 rounded-full self-start md:self-auto">Proposed electrons travel in energy levels.</span>
+                            </div>
+                            <div class="flex flex-col md:flex-row md:items-center justify-between p-4 bg-stone-50 rounded-xl border border-stone-200 gap-2">
+                                <div class="text-sm">
+                                    <strong class="text-stone-800 text-base">Schrödinger</strong>
+                                    <p class="text-stone-500 text-xs mt-1">Electron Clouds</p>
+                                </div>
+                                <span class="text-xs bg-stone-200 text-stone-700 font-bold px-3 py-1 rounded-full self-start md:self-auto">Modern electron cloud model.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-lg font-extrabold text-stone-800 border-b border-stone-200 pb-2 mb-4">8 & 9. Parts of an Atom Summary</h4>
+                        <div class="overflow-x-auto rounded-xl border border-stone-200 mb-6">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead>
+                                    <tr class="bg-stone-100 text-stone-700 border-b border-stone-200 font-bold">
+                                        <th class="p-4">Particle</th>
+                                        <th class="p-4">Charge</th>
+                                        <th class="p-4">Location</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-stone-200 text-stone-600">
+                                    <tr>
+                                        <td class="p-4 font-bold text-stone-800">Proton</td>
+                                        <td class="p-4 text-emerald-700 font-bold">Positive</td>
+                                        <td class="p-4">Inside the nucleus</td>
+                                    </tr>
+                                    <tr class="bg-stone-50/50">
+                                        <td class="p-4 font-bold text-stone-800">Neutron</td>
+                                        <td class="p-4 text-stone-600 font-bold">Neutral</td>
+                                        <td class="p-4">Inside the nucleus</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-4 font-bold text-stone-800">Electron</td>
+                                        <td class="p-4 text-rose-600 font-bold">Negative</td>
+                                        <td class="p-4">Outside the nucleus (shells)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="p-4 bg-stone-50 rounded-xl border border-stone-200 text-xs">
+                                <p class="font-bold text-stone-700">Which particle has a positive charge?</p>
+                                <p class="text-emerald-700 font-bold mt-1">✓ Proton</p>
+                            </div>
+                            <div class="p-4 bg-stone-50 rounded-xl border border-stone-200 text-xs">
+                                <p class="font-bold text-stone-700">Which particle has no charge?</p>
+                                <p class="text-emerald-700 font-bold mt-1">✓ Neutron</p>
+                            </div>
+                            <div class="p-4 bg-stone-50 rounded-xl border border-stone-200 text-xs">
+                                <p class="font-bold text-stone-700">Most of an atom's mass is found:</p>
+                                <p class="text-emerald-700 font-bold mt-1">✓ In the nucleus</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-lg font-extrabold text-stone-800 border-b border-stone-200 pb-2 mb-4">10. Diagram of the Atom Context</h4>
+                        <div class="bg-stone-50 p-6 rounded-xl border border-stone-200 text-sm space-y-2">
+                            <p><strong>Center circle cluster:</strong> Nucleus (contains Protons and Neutrons)</p>
+                            <p><strong>Outer rings/shell:</strong> Electrons (orbiting outside the core)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PART D -->
+                <div id="elementsTab" class="dossier-panel space-y-8 hidden">
+                    <div>
+                        <h4 class="text-lg font-extrabold text-stone-800 border-b border-stone-200 pb-2 mb-4">11. Element Information Table</h4>
+                        <div class="overflow-x-auto rounded-xl border border-stone-200">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead>
+                                    <tr class="bg-stone-100 text-stone-700 border-b border-stone-200 font-bold">
+                                        <th class="p-4">Element</th>
+                                        <th class="p-4">Symbol</th>
+                                        <th class="p-4">Atomic Number</th>
+                                        <th class="p-4">Protons</th>
+                                        <th class="p-4">Electrons</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-stone-200 text-stone-600">
+                                    <tr>
+                                        <td class="p-4 font-bold text-stone-800">Oxygen</td>
+                                        <td class="p-4 font-mono font-bold">O</td>
+                                        <td class="p-4">8</td>
+                                        <td class="p-4">8</td>
+                                        <td class="p-4">8</td>
+                                    </tr>
+                                    <tr class="bg-stone-50/50">
+                                        <td class="p-4 font-bold text-stone-800">Carbon</td>
+                                        <td class="p-4 font-mono font-bold">C</td>
+                                        <td class="p-4">6</td>
+                                        <td class="p-4">6</td>
+                                        <td class="p-4">6</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-4 font-bold text-stone-800">Sodium</td>
+                                        <td class="p-4 font-mono font-bold">Na</td>
+                                        <td class="p-4">11</td>
+                                        <td class="p-4">11</td>
+                                        <td class="p-4">11</td>
+                                    </tr>
+                                    <tr class="bg-stone-50/50">
+                                        <td class="p-4 font-bold text-stone-800">Helium</td>
+                                        <td class="p-4 font-mono font-bold">He</td>
+                                        <td class="p-4">2</td>
+                                        <td class="p-4">2</td>
+                                        <td class="p-4">2</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-lg font-extrabold text-stone-800 border-b border-stone-200 pb-2 mb-4">12. Mystery Elements Decoder</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="p-4 bg-white border border-stone-200 rounded-xl shadow-sm text-center">
+                                <span class="text-[10px] font-black uppercase text-indigo-600">8p, 8e, 8n</span>
+                                <p class="text-stone-800 font-extrabold text-lg mt-1">Oxygen</p>
+                            </div>
+                            <div class="p-4 bg-white border border-stone-200 rounded-xl shadow-sm text-center">
+                                <span class="text-[10px] font-black uppercase text-indigo-600">6p, 6e, 6n</span>
+                                <p class="text-stone-800 font-extrabold text-lg mt-1">Carbon</p>
+                            </div>
+                            <div class="p-4 bg-white border border-stone-200 rounded-xl shadow-sm text-center">
+                                <span class="text-[10px] font-black uppercase text-indigo-600">11p, 11e, 12n</span>
+                                <p class="text-stone-800 font-extrabold text-lg mt-1">Sodium</p>
+                            </div>
+                            <div class="p-4 bg-white border border-stone-200 rounded-xl shadow-sm text-center">
+                                <span class="text-[10px] font-black uppercase text-indigo-600">2p, 2e, 2n</span>
+                                <p class="text-stone-800 font-extrabold text-lg mt-1">Helium</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PART E -->
+                <div id="connectionsTab" class="dossier-panel space-y-8 hidden">
+                    <div>
+                        <h4 class="text-lg font-extrabold text-stone-800 border-b border-stone-200 pb-2 mb-4">14. Ice, Water, and Steam States</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="p-5 bg-stone-50 border border-stone-200 rounded-2xl shadow-sm">
+                                <span class="text-xs font-black text-sky-600 uppercase tracking-widest block">Ice (Solid)</span>
+                                <p class="text-stone-600 text-sm mt-2 leading-relaxed">Particles are tightly packed together and vibrating in fixed positions.</p>
+                            </div>
+                            <div class="p-5 bg-stone-50 border border-stone-200 rounded-2xl shadow-sm">
+                                <span class="text-xs font-black text-teal-600 uppercase tracking-widest block">Water (Liquid)</span>
+                                <p class="text-stone-600 text-sm mt-2 leading-relaxed">Particles are close together but can slide and tumble past one another.</p>
+                            </div>
+                            <div class="p-5 bg-stone-50 border border-stone-200 rounded-2xl shadow-sm">
+                                <span class="text-xs font-black text-amber-600 uppercase tracking-widest block">Steam (Gas)</span>
+                                <p class="text-stone-600 text-sm mt-2 leading-relaxed">Particles are far apart and moving rapidly in all directions.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-stone-50 p-6 rounded-xl border border-stone-200 space-y-3">
+                            <h5 class="font-extrabold text-stone-800 text-base">15. How Ice Melts When Heated (KMT)</h5>
+                            <p class="text-stone-600 text-sm leading-relaxed">
+                                When ice is heated, the water particles absorb thermal energy and vibrate faster. Eventually, they gain enough kinetic energy to break free from their fixed positions, allowing them to slide past one another and change into a liquid.
+                            </p>
+                        </div>
+
+                        <div class="bg-stone-50 p-6 rounded-xl border border-stone-200 space-y-3">
+                            <h5 class="font-extrabold text-stone-800 text-base">16. Water Molecule Challenge Questions</h5>
+                            <div class="space-y-4 text-sm text-stone-600 leading-relaxed">
+                                <div>
+                                    <strong>Q1. What elements make up water?</strong>
+                                    <p class="text-stone-800 font-semibold mt-1">Water is made up of hydrogen and oxygen.</p>
+                                </div>
+                                <div>
+                                    <strong>Q2. If a proton were added to an oxygen atom, what would happen?</strong>
+                                    <p class="text-stone-800 font-semibold mt-1">The atomic number would change from 8 to 9, transforming the oxygen atom into a completely different element called Fluorine.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TOBY'S SELF-ASSESSMENT -->
+                <div id="assessmentTab" class="dossier-panel space-y-6 hidden">
+                    <h4 class="text-lg font-extrabold text-stone-800 border-b border-stone-200 pb-2 mb-4">Toby's Learning Targets & Confidence Values</h4>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-stone-50 rounded-xl border border-stone-200 flex justify-between items-center">
+                            <span class="text-sm font-semibold text-stone-700">I can explain Kinetic Molecular Theory.</span>
+                            <span class="text-xs font-black uppercase text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">😊 I Got It</span>
+                        </div>
+                        <div class="p-4 bg-stone-50 rounded-xl border border-stone-200 flex justify-between items-center">
+                            <span class="text-sm font-semibold text-stone-700">I can describe solids, liquids, and gases.</span>
+                            <span class="text-xs font-black uppercase text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">😊 I Got It</span>
+                        </div>
+                        <div class="p-4 bg-stone-50 rounded-xl border border-stone-200 flex justify-between items-center">
+                            <span class="text-sm font-semibold text-stone-700">I can explain how atomic models changed over time.</span>
+                            <span class="text-xs font-black uppercase text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full">😐 Almost There</span>
+                        </div>
+                        <div class="p-4 bg-stone-50 rounded-xl border border-stone-200 flex justify-between items-center">
+                            <span class="text-sm font-semibold text-stone-700">I can identify protons, neutrons, and electrons.</span>
+                            <span class="text-xs font-black uppercase text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">😊 I Got It</span>
+                        </div>
+                        <div class="p-4 bg-stone-50 rounded-xl border border-stone-200 flex justify-between items-center">
+                            <span class="text-sm font-semibold text-stone-700">I can use the periodic table.</span>
+                            <span class="text-xs font-black uppercase text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">😊 I Got It</span>
+                        </div>
+                        <div class="p-4 bg-stone-50 rounded-xl border border-stone-200 flex justify-between items-center">
+                            <span class="text-sm font-semibold text-stone-700">I can connect particle behaviour to changes of state.</span>
+                            <span class="text-xs font-black uppercase text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full">😊 I Got It</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-stone-200">
+                        <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
+                            <strong class="text-emerald-800 text-xs block uppercase tracking-widest font-black">One thing I understand really well:</strong>
+                            <p class="text-stone-700 text-sm mt-1">One thing I understand really well is how to read the periodic table.</p>
+                        </div>
+                        <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                            <strong class="text-amber-800 text-xs block uppercase tracking-widest font-black">One thing I should review before the assessment:</strong>
+                            <p class="text-stone-700 text-sm mt-1">One thing I should review before the assessment is how atomic models are changed over time.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-stone-950 text-stone-500 text-center py-8 mt-12 border-t border-stone-800">
+        <p class="text-sm font-semibold">Interactive Chemistry Companion Built for Toby.</p>
+        <p class="text-xs mt-1">Constant Motion • Atomic Theory • Active Recall</p>
+    </footer>
+
+    <script>
+        // API Configuration (Provided dynamically by platform)
+        const apiKey = "";
+
+        // Common Gemini API caller with Exponential Backoff
+        async function callGemini(payload) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+            let delay = 1000;
+            for (let i = 0; i < 5; i++) {
+                try {
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (response.ok) {
+                        return await response.json();
+                    }
+                } catch (error) {
+                    // Fail silently to proceed to retry delay
+                }
+                await new Promise(resolve => setTimeout(resolve, delay));
+                delay *= 2;
+            }
+            throw new Error("Unable to establish communication with the AI. Please try again.");
+        }
+
+        // Audio synthesis context
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playBeep(frequency = 440, duration = 0.05, type = 'sine') {
+            try {
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                
+                osc.type = type;
+                osc.frequency.value = frequency;
+                
+                gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + duration);
+                
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                // Audio context block handling
+            }
+        }
+
+        const tempSlider = document.getElementById('tempSlider');
+        const tempValueDisplay = document.getElementById('tempValueDisplay');
+        const stateTitle = document.getElementById('stateTitle');
+        const stateDesc = document.getElementById('stateDesc');
+        const phaseNote = document.getElementById('phaseNote');
+        const stateInfoCard = document.getElementById('stateInfoCard');
+        
+        let kmtChartInstance = null;
+
+        function initKmtChart() {
+            const ctx = document.getElementById('kmtChart').getContext('2d');
+            kmtChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Kinetic Energy'],
+                    datasets: [{
+                        label: 'Energy Level',
+                        data: [10],
+                        backgroundColor: 'rgba(13, 148, 136, 0.7)',
+                        borderColor: 'rgba(13, 148, 136, 1)',
+                        borderWidth: 2,
+                        borderRadius: 12
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                color: '#78716c',
+                                font: { weight: 'bold' }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Particle Velocity (%)',
+                                color: '#44403c',
+                                font: { weight: 'bold' }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#44403c',
+                                font: { weight: 'bold' }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#1c1917',
+                            callbacks: {
+                                label: function(context) {
+                                    return ' Kinetic Speed: ' + context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        let lastValGroup = -1;
+        function updateKMTState() {
+            const val = parseInt(tempSlider.value);
+            tempValueDisplay.innerText = `${val}°C`;
+            kmtChartInstance.data.datasets[0].data = [val];
+            
+            let valGroup = 0;
+            if (val < 33) {
+                valGroup = 1;
+                if(valGroup !== lastValGroup) playBeep(220, 0.1, 'triangle');
+                kmtChartInstance.data.datasets[0].backgroundColor = 'rgba(14, 165, 233, 0.7)'; 
+                kmtChartInstance.data.datasets[0].borderColor = 'rgba(14, 165, 233, 1)';
+                stateTitle.innerHTML = '🧊 Solid State';
+                stateDesc.innerHTML = 'Particles are tightly packed together in a rigid, fixed crystalline structure. They cannot slide past one another; they can only <strong>vibrate in place</strong>.';
+                phaseNote.innerHTML = 'Removing thermal energy causes liquids to undergo <strong>Solidification (Freezing)</strong>.';
+                stateInfoCard.className = 'bg-white p-6 rounded-xl shadow-sm border-l-8 border-sky-500 smooth-transition';
+            } else if (val < 66) {
+                valGroup = 2;
+                if(valGroup !== lastValGroup) playBeep(330, 0.1, 'triangle');
+                kmtChartInstance.data.datasets[0].backgroundColor = 'rgba(13, 148, 136, 0.7)'; 
+                kmtChartInstance.data.datasets[0].borderColor = 'rgba(13, 148, 136, 1)';
+                stateTitle.innerHTML = '💧 Liquid State';
+                stateDesc.innerHTML = 'Particles are still close together but have no fixed arrangement. They have enough energy to <strong>slide and tumble past each other</strong>, allowing liquids to flow and take the shape of their container.';
+                phaseNote.innerHTML = 'Adding thermal energy causes solids to undergo <strong>Melting</strong>. Removing thermal energy causes gases to undergo <strong>Condensation</strong>.';
+                stateInfoCard.className = 'bg-white p-6 rounded-xl shadow-sm border-l-8 border-teal-500 smooth-transition';
+            } else {
+                valGroup = 3;
+                if(valGroup !== lastValGroup) playBeep(440, 0.1, 'triangle');
+                kmtChartInstance.data.datasets[0].backgroundColor = 'rgba(245, 158, 11, 0.7)'; 
+                kmtChartInstance.data.datasets[0].borderColor = 'rgba(245, 158, 11, 1)';
+                stateTitle.innerHTML = '☁️ Gas State';
+                stateDesc.innerHTML = 'Particles are spaced very far apart with massive amounts of empty space between them. They have high kinetic energy, moving <strong>rapidly and randomly in all directions</strong> to fill any container.';
+                phaseNote.innerHTML = 'Adding thermal energy causes liquids to undergo <strong>Evaporation / Vaporization</strong>.';
+                stateInfoCard.className = 'bg-white p-6 rounded-xl shadow-sm border-l-8 border-amber-500 smooth-transition';
+            }
+            lastValGroup = valGroup;
+            kmtChartInstance.update();
+        }
+
+        const timelineData = [
+            { id: 'democritus', name: 'Democritus', year: '~400 BCE', icon: '🏛️', model: 'Atomos Concept', desc: 'First suggested that all matter is made of tiny, indivisible, indestructible pieces called "atomos". He used philosophical reasoning rather than laboratory tools.', replaced: 'The continuous matter concept.' },
+            { id: 'dalton', name: 'John Dalton', year: '1808', icon: '🎱', model: 'Billiard Ball Model', desc: 'Pioneered experimental atomic theory based on physical mass weights. He pictured atoms as hard, solid, indivisible spheres with no internal components.', replaced: 'Purely theoretical philosophy.' },
+            { id: 'thomson', name: 'J.J. Thomson', year: '1897', icon: '🍮', model: 'Plum Pudding Model', desc: 'Discovered the negatively charged electron using cathode ray tube experiments. Proved atoms are divisible and designed a positive matrix containing negative plums.', replaced: 'Dalton\'s hard sphere (Billiard Ball) model.' },
+            { id: 'rutherford', name: 'Ernest Rutherford', year: '1911', icon: '🎯', model: 'Nuclear Model', desc: 'Conducted the legendary Gold Foil experiment. Proved the atom is mostly empty space with a dense, positively charged nucleus in the absolute core.', replaced: 'Thomson\'s Plum Pudding model.' },
+            { id: 'bohr', name: 'Niels Bohr', year: '1913', icon: '🪐', model: 'Planetary Model', desc: 'Suggested electrons travel around the nucleus on highly organized, discrete circular tracks called energy levels to keep from collapsing inward.', replaced: 'Rutherford\'s unorganized nuclear orbits.' },
+            { id: 'schrodinger', name: 'Erwin Schrödinger', year: 'Modern', icon: '☁️', model: 'Electron Cloud Model', desc: 'Introduced mathematical probability wave mechanics. Proven that we cannot map an exact electron location, only cloud regions of probability.', replaced: 'Bohr\'s planetary concentric tracks.' }
+        ];
+
+        let selectedScientistName = "Democritus";
+
+        function initTimeline() {
+            const btnContainer = document.getElementById('timelineButtons');
+            timelineData.forEach((scientist, index) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left px-4 py-3.5 rounded-xl font-bold smooth-transition border ${index === 0 ? 'bg-amber-50 border-amber-300 text-amber-900 shadow-sm' : 'bg-white border-stone-200 text-stone-600 hover:bg-stone-50 hover:shadow-sm'}`;
+                btn.innerHTML = `<div class="flex justify-between items-center"><span>${scientist.name}</span> <span class="text-[10px] font-black uppercase tracking-wider bg-stone-100 text-stone-500 px-2 py-0.5 rounded">${scientist.year}</span></div>`;
+                btn.onclick = () => {
+                    playBeep(400 + (index * 50), 0.05);
+                    updateTimeline(index, btn);
+                };
+                btnContainer.appendChild(btn);
+            });
+            updateTimeline(0, btnContainer.firstChild);
+        }
+
+        function updateTimeline(index, activeBtn) {
+            const btns = document.getElementById('timelineButtons').children;
+            for(let i=0; i<btns.length; i++) {
+                btns[i].className = 'w-full text-left px-4 py-3.5 rounded-xl font-bold smooth-transition border bg-white border-stone-200 text-stone-600 hover:bg-stone-50 hover:shadow-sm';
+            }
+            activeBtn.className = 'w-full text-left px-4 py-3.5 rounded-xl font-bold smooth-transition border bg-amber-50 border-amber-300 text-amber-900 shadow-sm';
+
+            const data = timelineData[index];
+            selectedScientistName = data.name;
+            document.getElementById('timelineIcon').innerText = data.icon;
+            document.getElementById('timelineName').innerText = data.name;
+            document.getElementById('timelineModel').innerText = data.model;
+            document.getElementById('timelineDesc').innerText = data.desc;
+            document.getElementById('timelineReason').innerText = data.replaced;
+
+            // Update Ask Scientist Area
+            document.getElementById('askScientistSection').classList.remove('hidden');
+            document.getElementById('scientistAskName').innerText = data.name;
+            document.getElementById('scientistAnswerBox').classList.add('hidden');
+            document.getElementById('scientistQuestionInput').value = "";
+        }
+
+        // LLM Ask Scientist Integration
+        document.getElementById('btnAskScientist').addEventListener('click', async () => {
+            const question = document.getElementById('scientistQuestionInput').value.trim();
+            if (!question) return;
+
+            playBeep(587.33, 0.08); // D5
+            const answerBox = document.getElementById('scientistAnswerBox');
+            const loader = document.getElementById('scientistLoader');
+            const answerText = document.getElementById('scientistAnswerText');
+
+            answerBox.classList.remove('hidden');
+            loader.classList.remove('hidden');
+            answerText.innerText = "";
+
+            const payload = {
+                contents: [{
+                    parts: [{
+                        text: `You are simulating the historical scientist ${selectedScientistName}. Answer this question from Toby, a Grade 8 chemistry student: "${question}". Keep your response inside 3 sentences. Stay in character, be extremely friendly, use historical context if relevant, and explain the science clearly so an 8th grader can understand.`
+                    }]
+                }],
+                systemInstruction: {
+                    parts: [{
+                        text: `You are the historical scientist ${selectedScientistName}. You must only answer questions as yourself, using age-appropriate science terminology matching Grade 8 standards.`
+                    }]
+                }
+            };
+
+            try {
+                const response = await callGemini(payload);
+                const reply = response.candidates?.[0]?.content?.parts?.[0]?.text || "I was unable to recall my notes. Please ask again!";
+                loader.classList.add('hidden');
+                answerText.innerText = reply;
+                playBeep(880, 0.1, 'triangle'); // A5
+            } catch (err) {
+                loader.classList.add('hidden');
+                answerText.innerText = err.message;
+                playBeep(150, 0.15, 'sawtooth');
+            }
+        });
+
+        function toggleParticle(id, cardEl) {
+            playBeep(600, 0.05);
+            const el = document.getElementById(id);
+            if(el.classList.contains('hide')) {
+                el.classList.remove('hide');
+                el.classList.add('show');
+                cardEl.querySelector('.bg-stone-50').classList.add('shadow-xl', 'scale-[1.02]');
+            } else {
+                el.classList.remove('show');
+                el.classList.add('hide');
+                cardEl.querySelector('.bg-stone-50').classList.remove('shadow-xl', 'scale-[1.02]');
+            }
+        }
+
+        // Element Database expanded to atomic number 21 (Scandium)
+        const elementData = {
+            1: { name: 'Hydrogen', symbol: 'H', category: 'Reactive Nonmetal', color: 'border-rose-300 bg-rose-50/10' },
+            2: { name: 'Helium', symbol: 'He', category: 'Noble Gas', color: 'border-cyan-300 bg-cyan-50/10' },
+            3: { name: 'Lithium', symbol: 'Li', category: 'Alkali Metal', color: 'border-amber-300 bg-amber-50/10' },
+            4: { name: 'Beryllium', symbol: 'Be', category: 'Alkaline Earth Metal', color: 'border-yellow-300 bg-yellow-50/10' },
+            5: { name: 'Boron', symbol: 'B', category: 'Metalloid', color: 'border-emerald-300 bg-emerald-50/10' },
+            6: { name: 'Carbon', symbol: 'C', category: 'Reactive Nonmetal', color: 'border-stone-400 bg-stone-50/10' },
+            7: { name: 'Nitrogen', symbol: 'N', category: 'Reactive Nonmetal', color: 'border-violet-300 bg-violet-50/10' },
+            8: { name: 'Oxygen', symbol: 'O', category: 'Reactive Nonmetal', color: 'border-indigo-300 bg-indigo-50/10' },
+            9: { name: 'Fluorine', symbol: 'F', category: 'Halogen', color: 'border-orange-300 bg-orange-50/10' },
+            10: { name: 'Neon', symbol: 'Ne', category: 'Noble Gas', color: 'border-cyan-300 bg-cyan-50/10' },
+            11: { name: 'Sodium', symbol: 'Na', category: 'Alkali Metal', color: 'border-amber-300 bg-amber-50/10' },
+            12: { name: 'Magnesium', symbol: 'Mg', category: 'Alkaline Earth Metal', color: 'border-yellow-300 bg-yellow-50/10' },
+            13: { name: 'Aluminum', symbol: 'Al', category: 'Post-Transition Metal', color: 'border-stone-300 bg-stone-50/10' },
+            14: { name: 'Silicon', symbol: 'Si', category: 'Metalloid', color: 'border-emerald-300 bg-emerald-50/10' },
+            15: { name: 'Phosphorus', symbol: 'P', category: 'Reactive Nonmetal', color: 'border-red-300 bg-red-50/10' },
+            16: { name: 'Sulfur', symbol: 'S', category: 'Reactive Nonmetal', color: 'border-yellow-400 bg-yellow-50/10' },
+            17: { name: 'Chlorine', symbol: 'Cl', category: 'Halogen', color: 'border-orange-300 bg-orange-50/10' },
+            18: { name: 'Argon', symbol: 'Ar', category: 'Noble Gas', color: 'border-cyan-300 bg-cyan-50/10' },
+            19: { name: 'Potassium', symbol: 'K', category: 'Alkali Metal', color: 'border-amber-300 bg-amber-50/10' },
+            20: { name: 'Calcium', symbol: 'Ca', category: 'Alkaline Earth Metal', color: 'border-yellow-300 bg-yellow-50/10' },
+            21: { name: 'Scandium', symbol: 'Sc', category: 'Transition Metal', color: 'border-indigo-400 bg-indigo-50/10' }
+        };
+
+        let currentProtons = 8; 
+
+        function updateElementDisplay() {
+            document.getElementById('protonCountDisplay').innerText = currentProtons;
+            document.getElementById('atomicNumberDisplay').innerText = currentProtons;
+            document.getElementById('electronCountDisplay').innerText = currentProtons;
+            
+            const data = elementData[currentProtons] || { name: 'Unknown', symbol: '?', category: 'Unknown', color: 'border-stone-300' };
+            
+            const card = document.getElementById('elementCard');
+            card.className = `bg-white border-2 rounded-2xl p-8 relative overflow-hidden shadow-lg smooth-transition ${data.color}`;
+            
+            document.getElementById('elementName').innerText = data.name;
+            document.getElementById('elementSymbol').innerText = data.symbol;
+            document.getElementById('elementCategory').innerText = data.category;
+            document.getElementById('neutralElementName').innerText = data.name;
+
+            // Collapse challenge card on change to force regeneration matching new state
+            document.getElementById('aiChallengeBox').classList.add('hidden');
+        }
+
+        // LLM AI Challenge Generator
+        document.getElementById('btnAiChallenge').addEventListener('click', async () => {
+            playBeep(493.88, 0.08); // B4
+            const challengeBox = document.getElementById('aiChallengeBox');
+            const loader = document.getElementById('challengeLoader');
+            const content = document.getElementById('challengeContent');
+            const feedback = document.getElementById('challengeFeedback');
+
+            challengeBox.classList.remove('hidden');
+            loader.classList.remove('hidden');
+            content.classList.add('hidden');
+            feedback.classList.add('hidden');
+
+            const currentElement = elementData[currentProtons];
+
+            const payload = {
+                contents: [{
+                    parts: [{
+                        text: `Construct a single multiple-choice question testing the properties, group, discovery, or atomic features of ${currentElement.name} (Atomic number ${currentProtons}). Include exactly 4 options. Make sure the explanation reinforces the concepts.`
+                    }]
+                }],
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            question: { type: "STRING" },
+                            options: {
+                                type: "ARRAY",
+                                items: { type: "STRING" }
+                            },
+                            correctIndex: { type: "INTEGER" },
+                            explanation: { type: "STRING" }
+                        },
+                        required: ["question", "options", "correctIndex", "explanation"]
+                    }
+                },
+                systemInstruction: {
+                    parts: [{
+                        text: "You are an expert Grade 8 Science Teacher who formats all responses in structured JSON matching the provided schema exactly. The questions must test basic middle school understanding of periodic elements."
+                    }]
+                }
+            };
+
+            try {
+                const response = await callGemini(payload);
+                const challenge = JSON.parse(response.candidates?.[0]?.content?.parts?.[0]?.text);
+                
+                document.getElementById('challengeQuestionText').innerText = challenge.question;
+                
+                const optionsGrid = document.getElementById('challengeOptions');
+                optionsGrid.innerHTML = "";
+                
+                challenge.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = "w-full text-left p-3 rounded-xl bg-stone-50 border border-stone-200 hover:bg-indigo-50 hover:border-indigo-300 font-medium transition-all text-xs";
+                    btn.innerText = opt;
+                    btn.onclick = () => {
+                        feedback.classList.remove('hidden');
+                        if (idx === challenge.correctIndex) {
+                            playBeep(880, 0.1, 'sine');
+                            feedback.className = "p-3 rounded-xl text-xs font-semibold leading-relaxed bg-emerald-50 border border-emerald-200 text-emerald-800";
+                            feedback.innerText = "🎉 Correct! " + challenge.explanation;
+                        } else {
+                            playBeep(180, 0.15, 'sawtooth');
+                            feedback.className = "p-3 rounded-xl text-xs font-semibold leading-relaxed bg-rose-50 border border-rose-200 text-rose-800";
+                            feedback.innerText = "❌ Not quite. Give it another try!";
+                        }
+                    };
+                    optionsGrid.appendChild(btn);
+                });
+
+                loader.classList.add('hidden');
+                content.classList.remove('hidden');
+                playBeep(659.25, 0.1, 'sine'); // E5
+            } catch (err) {
+                loader.classList.add('hidden');
+                challengeBox.classList.add('hidden');
+                playBeep(150, 0.15, 'sawtooth');
+            }
+        });
+
+        // Dossier Tabs switcher
+        function switchDossierTab(tabId, btnEl) {
+            playBeep(500, 0.05);
+            const panels = document.querySelectorAll('.dossier-panel');
+            panels.forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            document.getElementById(tabId).classList.remove('hidden');
+
+            const tabBtns = document.querySelectorAll('.dossier-tab-btn');
+            tabBtns.forEach(btn => {
+                btn.className = "dossier-tab-btn px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider smooth-transition bg-stone-100 text-stone-600 hover:bg-stone-200";
+            });
+            btnEl.className = "dossier-tab-btn px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider smooth-transition bg-emerald-600 text-white shadow-md";
+        }
+
+        document.getElementById('btnAddProton').addEventListener('click', () => {
+            if(currentProtons < 21) {
+                playBeep(523.25, 0.08, 'triangle'); // C5
+                currentProtons++;
+                updateElementDisplay();
+            } else {
+                playBeep(150, 0.15, 'sawtooth'); // Error buzz
+            }
+        });
+
+        document.getElementById('btnSubProton').addEventListener('click', () => {
+            if(currentProtons > 1) {
+                playBeep(392.00, 0.08, 'triangle'); // G4
+                currentProtons--;
+                updateElementDisplay();
+            } else {
+                playBeep(150, 0.15, 'sawtooth'); // Error buzz
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initKmtChart();
+            tempSlider.addEventListener('input', updateKMTState);
+            initTimeline();
+            updateElementDisplay();
+        });
+
+    </script>
+</body>
+</html>
